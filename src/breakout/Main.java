@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,6 +16,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Feel free to completely change this code or delete it entirely. 
@@ -43,6 +46,7 @@ public class Main extends Application {
     private Rectangle myPaddle;
     private int xDir = 1;
     private int yDir = -1;
+    Brick brickArr[] = new Brick[5];
 
     /**
      * Initialize what will be displayed and how it will be updated.
@@ -62,11 +66,15 @@ public class Main extends Application {
         animation.play();
     }
 
+    Group brickGroup = new Group();
+
+
     // Create the game's "scene": what shapes will be in the game and their starting properties
     private Scene setupGame (int width, int height, Paint background) {
         // create one top level collection to organize the things in the scene
         Group root = new Group();
-        Group brickGroup = new Group();
+
+
         // make some shapes and set their properties
         // x and y represent the top left corner, so center it in window
         int bouncerStartX = width / 2;
@@ -83,6 +91,7 @@ public class Main extends Application {
             Brick brick = new Brick(xRect, yRect, SIZE_WIDTH / 5 - BOUNCER_RADIUS, 10, PADDLE_COLOR);
             xRect+= (SIZE_WIDTH / 5);
             brickGroup.getChildren().add(brick.getRect());
+            brickArr[i] = brick;
         }
 
 
@@ -114,6 +123,33 @@ public class Main extends Application {
         }
         if((myBouncer.getCenterY() + myBouncer.getRadius()) >= SIZE_HEIGHT || (myBouncer.getCenterY() - myBouncer.getRadius()) <= 0){
             yDir = yDir * -1;
+        }
+        for(int i = 0; i < brickArr.length; i++){
+            Brick currBrick = brickArr[i];
+            Shape intersection = Shape.intersect(currBrick.getRect(), myBouncer);
+            if(intersection.getBoundsInLocal().getWidth() != -1){
+                if(currBrick.getBotBound() + BOUNCER_RADIUS <= myBouncer.getCenterX()){
+                    xDir = xDir * -1;
+                }
+                else if(currBrick.getTopBound() - BOUNCER_RADIUS >= myBouncer.getCenterX()){
+                    xDir = xDir * -1;
+                }
+                if(currBrick.getLeftBound() - BOUNCER_RADIUS <= myBouncer.getCenterY()){
+                    yDir = yDir * -1;
+                }
+                else if(currBrick.getRightBound() + BOUNCER_RADIUS >= myBouncer.getCenterY()){
+                    yDir = yDir * -1;
+                }
+                currBrick.setHitCount(-1);
+            }
+
+
+        }
+        brickGroup.getChildren().clear();
+        for(int i = 0; i< brickArr.length; i++){
+            if(brickArr[i].getHitCount() != -1){
+                brickGroup.getChildren().add(brickArr[i].getRect());
+            }
         }
         myBouncer.setCenterX(myBouncer.getCenterX() + xDir * BOUNCER_SPEED * elapsedTime);
         myBouncer.setCenterY(myBouncer.getCenterY() + yDir * BOUNCER_SPEED * elapsedTime);
