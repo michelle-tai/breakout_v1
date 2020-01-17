@@ -4,10 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -16,8 +13,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Feel free to completely change this code or delete it entirely. 
@@ -47,6 +42,8 @@ public class Main extends Application {
     private int xDir = 1;
     private int yDir = -1;
     Brick brickArr[] = new Brick[5];
+    private Ball ball;
+    private Paddle paddle;
 
     /**
      * Initialize what will be displayed and how it will be updated.
@@ -79,9 +76,12 @@ public class Main extends Application {
         // x and y represent the top left corner, so center it in window
         int bouncerStartX = width / 2;
         int bouncerStartY = height - PADDLE_HEIGHT - BOUNCER_RADIUS;
-        myPaddle = new Rectangle(width / 2 - PADDLE_WIDTH / 2, height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
-        myPaddle.setFill(PADDLE_COLOR);
-        myBouncer = new Circle(bouncerStartX, bouncerStartY, BOUNCER_RADIUS, BOUNCER_COLOR);
+//        myPaddle = new Rectangle(bouncerStartX - PADDLE_WIDTH / 2, height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
+//        myPaddle.setFill(PADDLE_COLOR);
+        paddle = new Paddle(bouncerStartX - PADDLE_WIDTH / 2, height - PADDLE_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT);
+
+//        myBouncer = new Circle(bouncerStartX, bouncerStartY, BOUNCER_RADIUS, BOUNCER_COLOR);
+        ball = new Ball(bouncerStartX, bouncerStartY, BOUNCER_RADIUS);
 
         int xRect = BOUNCER_RADIUS / 2;
         int yRect = 0;
@@ -98,8 +98,10 @@ public class Main extends Application {
 
 
         // order added to the group is the order in which they are drawn
-        root.getChildren().add(myPaddle);
-        root.getChildren().add(myBouncer);
+//        root.getChildren().add(myPaddle);
+//        root.getChildren().add(myBouncer);
+        root.getChildren().add(paddle.getRect());
+        root.getChildren().add(ball.getBallCircle());
         root.getChildren().add(brickGroup);
 
         // create a place to see the shapes
@@ -114,35 +116,60 @@ public class Main extends Application {
     // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start
     private void step (double elapsedTime) {
         // update "actors" attributes
-        if((myBouncer.getCenterY() + myBouncer.getRadius()) >= SIZE_HEIGHT){
-            xDir = 0;
-            yDir = 0;
+        if (ball.checkRectIntersect(paddle.getRect())) {
+            ball.bounceOffPaddle(paddle);
         }
-        if((myBouncer.getCenterX() + myBouncer.getRadius()) >= SIZE_WIDTH || (myBouncer.getCenterX() - myBouncer.getRadius()) <= 0){
-            xDir = xDir * -1;
+
+//        if((myBouncer.getCenterY() + myBouncer.getRadius()) >= SIZE_HEIGHT){
+//            xDir = 0;
+//            yDir = 0;
+//        }
+//        if((myBouncer.getCenterX() + myBouncer.getRadius()) >= SIZE_WIDTH || (myBouncer.getCenterX() - myBouncer.getRadius()) <= 0){
+//            xDir = xDir * -1;
+//        }
+//        if((myBouncer.getCenterY() + myBouncer.getRadius()) >= SIZE_HEIGHT || (myBouncer.getCenterY() - myBouncer.getRadius()) <= 0){
+//            yDir = yDir * -1;
+//        }
+
+        if((ball.getY() + ball.getRadius()) >= SIZE_HEIGHT){
+            ball.setXDir(0);
+            ball.setY(0);
         }
-        if((myBouncer.getCenterY() + myBouncer.getRadius()) >= SIZE_HEIGHT || (myBouncer.getCenterY() - myBouncer.getRadius()) <= 0){
-            yDir = yDir * -1;
+        if((ball.getBallCircle().getCenterX() + ball.getRadius()) >= SIZE_WIDTH || (ball.getBallCircle().getCenterX() - ball.getRadius()) <= 0){
+//            xDir = xDir * -1;
+            ball.setXDir(ball.getXDir() * -1);
         }
+        if((ball.getBallCircle().getCenterY() + ball.getRadius()) >= SIZE_HEIGHT || (ball.getBallCircle().getCenterY() - ball.getRadius()) <= 0){
+//            yDir = yDir * -1;
+            ball.setYDir(ball.getYDir() * -1);
+        }
+
         for(int i = 0; i < brickArr.length; i++){
             Brick currBrick = brickArr[i];
-            Shape intersection = Shape.intersect(currBrick.getRect(), myBouncer);
-            if(intersection.getBoundsInLocal().getWidth() != -1){
-                if(currBrick.getBotBound() + BOUNCER_RADIUS <= myBouncer.getCenterX()){
-                    xDir = xDir * -1;
-                }
-                else if(currBrick.getTopBound() - BOUNCER_RADIUS >= myBouncer.getCenterX()){
-                    xDir = xDir * -1;
-                }
-                if(currBrick.getLeftBound() - BOUNCER_RADIUS <= myBouncer.getCenterY()){
-                    yDir = yDir * -1;
-                }
-                else if(currBrick.getRightBound() + BOUNCER_RADIUS >= myBouncer.getCenterY()){
-                    yDir = yDir * -1;
-                }
-                currBrick.setHitCount(-1);
-            }
+//            Shape intersection = Shape.intersect(currBrick.getBrickRect(), myBouncer);
+            if(ball.checkRectIntersect(currBrick.getRect())){
+                ball.bounceOffBrick(currBrick);
+//                if(currBrick.getBotBound() + ball.getBallCircle().getRadius() <= ball.getBallCircle().getCenterX() || currBrick.getTopBound() - ball.getBallCircle().getRadius() >= ball.getBallCircle().getCenterX()){
+//                    xDir = xDir * -1;
+//                }
+//
+//                if(currBrick.getLeftBound() - ball.getBallCircle().getRadius() <= ball.getBallCircle().getCenterY() || currBrick.getRightBound() + ball.getBallCircle().getRadius() >= ball.getBallCircle().getCenterY()){
+//                    yDir = yDir * -1;
+//                }
 
+            }
+//            if(intersection.getBoundsInLocal().getWidth() != -1){
+////                return true;
+////                ball.bounceOffBrick(currBrick);
+//                if(currBrick.getBotBound() + myBouncer.getRadius() <= myBouncer.getCenterX() || currBrick.getTopBound() - myBouncer.getRadius() >= myBouncer.getCenterX()){
+//                    xDir = xDir * -1;
+//                }
+//
+//                if(currBrick.getLeftBound() - myBouncer.getRadius() <= myBouncer.getCenterY() || currBrick.getRightBound() + myBouncer.getRadius() >= myBouncer.getCenterY()){
+//                    yDir = yDir * -1;
+//                }
+//            }
+//
 
         }
         brickGroup.getChildren().clear();
@@ -151,19 +178,26 @@ public class Main extends Application {
                 brickGroup.getChildren().add(brickArr[i].getRect());
             }
         }
-        myBouncer.setCenterX(myBouncer.getCenterX() + xDir * BOUNCER_SPEED * elapsedTime);
-        myBouncer.setCenterY(myBouncer.getCenterY() + yDir * BOUNCER_SPEED * elapsedTime);
+//        myBouncer.setCenterX(myBouncer.getCenterX() + xDir * BOUNCER_SPEED * elapsedTime);
+//        myBouncer.setCenterY(myBouncer.getCenterY() + yDir * BOUNCER_SPEED * elapsedTime);
+
+        ball.getBallCircle().setCenterX(ball.getBallCircle().getCenterX() + ball.getXDir() * BOUNCER_SPEED * elapsedTime);
+        ball.getBallCircle().setCenterY(ball.getBallCircle().getCenterY() + ball.getYDir() * BOUNCER_SPEED * elapsedTime);
+
+//        ball.setBallPos((int) (ball.getBallCircle().getCenterX() + ball.getXDir() * ball.getBallSpeed() * elapsedTime), (int) (ball.getBallCircle().getCenterY() + ball.getYDir() * ball.getBallSpeed() * elapsedTime));
     }
 
     // What to do each time a key is pressed
     private void handleKeyInput (KeyCode code) {
         //moving the paddle left and right
-        if (code == KeyCode.RIGHT && (myPaddle.getX() < SIZE_WIDTH - PADDLE_WIDTH)) {
-            myPaddle.setX(myPaddle.getX() + PADDLE_SPEED);
-        }
-        else if (code == KeyCode.LEFT && (myPaddle.getX() > 0)) {
-            myPaddle.setX(myPaddle.getX() - PADDLE_SPEED);
-        }
+//        if (code == KeyCode.RIGHT && (myPaddle.getX() < SIZE_WIDTH - PADDLE_WIDTH)) {
+//            myPaddle.setX(myPaddle.getX() + PADDLE_SPEED);
+//        }
+//        else if (code == KeyCode.LEFT && (myPaddle.getX() > 0)) {
+//            myPaddle.setX(myPaddle.getX() - PADDLE_SPEED);
+//        }
+
+        paddle.handleKeyInput(code);
 
         //cheat codes!
     }
