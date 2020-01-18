@@ -20,6 +20,7 @@ public class levelChooser {
     Ball ball;
     int lives = 3;
     Text lifeStats = new Text("Lives: " + lives);
+    Text losingText = new Text("You lost :(");
 
     public levelChooser(int width, int height, int r, int lifeNum){
         rows = r;
@@ -113,6 +114,63 @@ public class levelChooser {
         }
     }
 
+     void moveBall(double elapsedTime) {
+        if(brickGroup.getChildren().size() == 0){
+            stopBall();
+        }
+        if (ball.checkRectIntersect(paddle)) {
+            ball.bounceOffPaddle(paddle);
+        }
 
+        else if((ball.getY() + ball.getRadius()) >= SIZE_HEIGHT){
+            ball.setX(ball.getX());
+            ball.setY(ball.getY());
+        }
+        else if((ball.getX() + ball.getRadius()) >= SIZE_WIDTH || (ball.getX() - ball.getRadius()) <= 0){
+            ball.setXDir(ball.getXDir() * -1);
+        }
+        else if((ball.getBallCircle().getCenterY() - ball.getRadius()) <= 0){
+            ball.setYDir(ball.getYDir() * -1);
+        }
 
+        ball.setX(ball.getX() + ball.getXDir() * BOUNCER_SPEED * elapsedTime);
+        ball.setY(ball.getY() + ball.getYDir() * BOUNCER_SPEED * elapsedTime);
+    }
+
+    void stopBall() {
+        ball.setPos(ball.getX(), ball.getY());
+        ball.setYDir(0);
+        ball.setXDir(0);
+    }
+
+    public void checkBall() {
+        if(ball.checkIfDead(SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT + 20)){
+            ball.setX(paddle.getX() + PADDLE_WIDTH/2);
+            ball.setY(paddle.getY() - 20);
+            ball.setYDir((ball.getYDir() * -1));// 5 so that there isn't weird effects with the paddle
+            decrementLives();
+            lifeStats.setText("Lives: " + getLives());
+
+        }
+
+    }
+
+    public void checkLives() {
+        if(getLives() == 0){
+            stopBall();
+            losingText.setX(SIZE_WIDTH /2);
+            losingText.setY(SIZE_HEIGHT/2);
+            textGroup.getChildren().add(losingText);
+            textGroup.getChildren().removeAll(losingText);
+        }
+
+    }
+
+    public void incrementLives() {
+        lives++;
+    }
+
+    public void setLifeStats() {
+        lifeStats.setText("Lives: " + getLives());
+    }
 }
