@@ -7,11 +7,11 @@ Name:
 
 ### Timeline
 
-Start Date: 
+Start Date: 1/13/2020
 
 Finish Date: 
 
-Hours Spent:
+Hours Spent: 2
 
 ### Resources Used
 

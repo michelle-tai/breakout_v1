@@ -126,8 +126,8 @@ public class Ball implements Sprite{
     private double initialY;
     private double ballSpeed;
 
-    private int xDir = 1;
-    private int yDir = -1;
+    private double xDir = 1;
+    private double yDir = -1;
 
     public Ball(double x, double y, double radius){
         createBall(x, y, radius);
@@ -175,39 +175,56 @@ public class Ball implements Sprite{
         return ballSpeed;
     }
 
-    int getXDir(){
+    double getXDir(){
         return xDir;
     }
 
-    int getYDir(){
+    double getYDir(){
         return yDir;
     }
 
-    void setXDir(int x){
+    void setXDir(double x){
         xDir = x;
     }
 
-    void setYDir(int y){
+    void setYDir(double y){
         yDir = y;
     }
 
-    void bounceOffBrick(Brick rect){
-        changeDirection(rect);
-        rect.decrementHitCount(1);
+    void bounceOffBrick(Brick brick){
+        if(brick.getBotBound() + ballCircle.getRadius() <= ballCircle.getCenterX() || brick.getTopBound() - ballCircle.getRadius() >= ballCircle.getCenterX()){
+            yDir = yDir * -1;
+        }
+
+        else if(brick.getLeftBound() - ballCircle.getRadius() <= ballCircle.getCenterY() || brick.getRightBound() + ballCircle.getRadius() >= ballCircle.getCenterY()){
+//            yDir = yDir * -1;
+            xDir = xDir * -1.15;
+        }
+        brick.incHitCount(1);
     }
 
     void changeDirection(RectangularSprite rect) {
         if(rect.getBotBound() + ballCircle.getRadius() <= ballCircle.getCenterX() || rect.getTopBound() - ballCircle.getRadius() >= ballCircle.getCenterX()){
-            xDir = xDir * -1;
+            yDir = yDir * -1;
         }
 
-        if(rect.getLeftBound() - ballCircle.getRadius() <= ballCircle.getCenterY() || rect.getRightBound() + ballCircle.getRadius() >= ballCircle.getCenterY()){
-            yDir = yDir * -1;
+        else if(rect.getLeftBound() - ballCircle.getRadius() <= ballCircle.getCenterY() || rect.getRightBound() + ballCircle.getRadius() >= ballCircle.getCenterY()){
+
+            xDir = xDir * -1.15;
         }
 
     }
     void bounceOffPaddle(Paddle paddle){
-        changeDirection(paddle);
+        int xConst;
+        int yConst;
+        if(paddle.getBotBound() + ballCircle.getRadius() <= ballCircle.getCenterX() || paddle.getTopBound() - ballCircle.getRadius() >= ballCircle.getCenterX()){
+            yDir = yDir * -1;
+        }
+
+        else if(paddle.getLeftBound() - ballCircle.getRadius() <= ballCircle.getCenterY() || paddle.getRightBound() + ballCircle.getRadius() >= ballCircle.getCenterY()){
+//            yDir = yDir * -1;
+            xDir = xDir * -1.15;
+        }
     }
 
     boolean checkIfDead(){

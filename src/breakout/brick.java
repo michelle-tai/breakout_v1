@@ -1,72 +1,89 @@
 package breakout;
 
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
-//public class Brick extends Sprite{
-//    private int hitCount = 0;
-//    Rectangle rect;
-//    //width and height from sprite
-//
-//    public Brick(int x, int y, int width, int height, Paint color){
-//        makeBrick(x, y, width, height, color);
-//    }
-//
-//    void makeBrick(int x, int y, int width, int height, Paint color){
-//        spriteWidth = width;
-//        spriteHeight = height;
-//        rect = new Rectangle(width, height, color);
-//        setBrickPos(x, y);
-//        setBrickBound();
-//    }
-//
-//
-//
-//
-//    void setBrickPos(int x, int y){
-//        rect.setX(x);
-//        rect.setY(y);
-//    }
-//
-//    void setBrickBound(){
-//        leftBound = x;
-//        rightBound = x + spriteWidth;
-//        topBound = y;
-//        botBound = y - spriteHeight;
-//    }
-//
-//    void setBrickColor(Paint color){
-//        rect.setFill(color);
-//    }
-//    Rectangle getBrickRect(){
-//        return rect;
-//    }
-//
-//    void setHitCount(int num){
-//        hitCount = num;
-//    }
-//    int getHitCount(){
-//        return hitCount;
-//    }
-//
-//    void decrementHitCount(int num){
-//        hitCount = hitCount - num;
-//    }
-//
-//}
+public class Brick implements Sprite{
 
-public class Brick extends RectangularSprite{
+
     private int hitCount = 0;
     //width and height from sprite
 
-    public Brick(double x, double y, double width, double height, Paint color){
-        makeBrick(x, y, width, height, color);
-    }
+    Rectangle rect;
+    private double leftBound;
+    private double rightBound;
+    private double topBound;
+    private double botBound;
 
-    void makeBrick(double x, double y, double width, double height, Paint color){
-        super.rect = new Rectangle(width, height, color);
+    public Brick(double x, double y, double width, double height, Paint color){
+        rect = new Rectangle(width, height);
+        rect.setFill(color);
+        rect.setStroke(Color.BLACK);
+        System.out.println(color);
         setPos(x, y);
         setBounds();
+    }
+
+    @Override
+    public void setX(double x) {
+        rect.setX(x);
+
+    }
+    @Override
+    public double getX() {
+        return rect.getX();
+    }
+
+    @Override
+    public void setY(double y) {
+        rect.setY(y);
+    }
+
+    @Override
+    public double getY() {
+        return rect.getY();
+    }
+
+    @Override
+    public void setPos(double x, double y) {
+        rect.setX(x);
+        rect.setY(y);
+    }
+
+    public double getWidth() {
+        return rect.getWidth();
+    }
+
+    public double getHeight() {
+        return rect.getHeight();
+    }
+
+    public void setBounds() {
+        leftBound = rect.getX();
+        rightBound = rect.getX() + rect.getWidth();
+        topBound = rect.getY();
+        botBound = rect.getY() - rect.getHeight();
+    }
+
+    public double getLeftBound() {
+        return leftBound;
+    }
+
+    public double getRightBound() {
+        return rightBound;
+    }
+
+    public double getTopBound() {
+        return topBound;
+    }
+
+    public double getBotBound() {
+        return botBound;
+    }
+
+    Rectangle getRect(){
+        return rect;
     }
 
     void setHitCount(int num){
@@ -76,8 +93,8 @@ public class Brick extends RectangularSprite{
         return hitCount;
     }
 
-    void decrementHitCount(int num){
-        hitCount = hitCount - num;
+    void incHitCount(int num){
+        hitCount = hitCount + num;
     }
 
 }

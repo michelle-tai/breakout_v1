@@ -69,12 +69,76 @@ import static breakout.Main.SIZE_WIDTH;
 //        setPaddlePos(initialX, initialY);
 //    }
 //}
-public class Paddle extends RectangularSprite {
-
+public class Paddle implements Sprite {
+    Rectangle rect;
     private double paddleSpeed = 10;
     private double initialX;
     private double initialY;
+    private double leftBound;
+    private double rightBound;
+    private double topBound;
+    private double botBound;
 
+    @Override
+    public void setX(double x) {
+        rect.setX(x);
+
+    }
+    @Override
+    public double getX() {
+        return rect.getX();
+    }
+
+    @Override
+    public void setY(double y) {
+        rect.setY(y);
+    }
+
+    @Override
+    public double getY() {
+        return rect.getY();
+    }
+
+    @Override
+    public void setPos(double x, double y) {
+        rect.setX(x);
+        rect.setY(y);
+    }
+
+    public double getWidth() {
+        return rect.getWidth();
+    }
+
+    public double getHeight() {
+        return rect.getHeight();
+    }
+
+    public void setBounds() {
+        leftBound = rect.getX();
+        rightBound = rect.getX() + rect.getWidth();
+        topBound = rect.getY();
+        botBound = rect.getY() - rect.getHeight();
+    }
+
+    public double getLeftBound() {
+        return leftBound;
+    }
+
+    public double getRightBound() {
+        return rightBound;
+    }
+
+    public double getTopBound() {
+        return topBound;
+    }
+
+    public double getBotBound() {
+        return botBound;
+    }
+
+    Rectangle getRect(){
+        return rect;
+    }
     public Paddle(double x, double y, double width, double height){
         makePaddle(x, y, width, height);
     }
@@ -82,19 +146,19 @@ public class Paddle extends RectangularSprite {
     void makePaddle(double x, double y, double width, double height){
 //        setWidth(width);
 //        spriteHeight = height;
-        super.rect = new Rectangle(width, height, Color.PERU);
+        rect = new Rectangle(width, height, Color.PERU);
         setPos(x, y);
         setBounds();
         initialX = x;
         initialY = y;
     }
     void handleKeyInput(KeyCode code){
-        if (code == KeyCode.RIGHT && (super.rect.getX() < SIZE_WIDTH - super.rect.getWidth())) {
-            super.rect.setX(super.rect.getX() + paddleSpeed);
+        if (code == KeyCode.RIGHT && (rect.getX() < SIZE_WIDTH - rect.getWidth())) {
+            rect.setX(rect.getX() + paddleSpeed);
 
         }
-        else if (code == KeyCode.LEFT && (super.rect.getX() > 0)) {
-            super.rect.setX(super.rect.getX() - paddleSpeed);
+        else if (code == KeyCode.LEFT && (rect.getX() > 0)) {
+            rect.setX(rect.getX() - paddleSpeed);
         }
     }
 
