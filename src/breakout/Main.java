@@ -23,7 +23,7 @@ import java.util.List;
 public class Main extends Application {
     public static final String TITLE = "Boba Breakout";
     public static final int SIZE_WIDTH = 400;
-    public static final int SIZE_HEIGHT = 800;
+    public static final int SIZE_HEIGHT = 600;
     public static final int FRAMES_PER_SECOND = 60;
     public static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
@@ -70,8 +70,7 @@ public class Main extends Application {
     // Create the game's "scene": what shapes will be in the game and their starting properties
     private Scene setupGame (int width, int height, Paint background) {
         // create one top level collection to organize the things in the scene
-        // make some shapes and set their properties
-        // x and y represent the top left corner, so center it in window
+
         int bouncerStartX = width / 2;
         int bouncerStartY = height - PADDLE_HEIGHT - BOUNCER_RADIUS;
 
@@ -83,12 +82,14 @@ public class Main extends Application {
         int yRect = 0;
         Paint fill = Color.BLACK;
         for(int i = 0; i < 5; i++){
-            brickArr[i] = new Brick(xRect, yRect, SIZE_WIDTH / 5 - BOUNCER_RADIUS, 10, fill);
+            brickArr[i] = new Brick(xRect, yRect, SIZE_WIDTH / 5 - BOUNCER_RADIUS, 100, fill);
             xRect+= (SIZE_WIDTH / 5);
+            brickGroup.getChildren().add(brickArr[i]);
+            System.out.println(i);
         }
 
         // order added to the group is the order in which they are drawn
-        root.getChildren().add(paddle.getRect());
+        root.getChildren().add(paddle);
         root.getChildren().add(ball.getBallCircle());
         root.getChildren().add(brickGroup);
 
@@ -104,7 +105,34 @@ public class Main extends Application {
     // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start
     private void step (double elapsedTime) {
         // update "actors" attributes
-        if (ball.checkRectIntersect(paddle.getRect())) {
+        brickGroup.getChildren().clear();
+        for(int i = 0; i < brickArr.length; i++){
+            Brick brick = brickArr[i];
+////            System.out.println(brick.getHitCount());
+//////            Rectangle brickRect = brick.getRect();
+////            if(brick.getHitCount() > 1){
+////                brickGroup.getChildren().removeAll(brick);
+////                System.out.println("sad");
+////                brick.setFill(BACKGROUND);
+////            }
+            if(brick.getHitCount() < 1){
+                brickGroup.getChildren().add(brick);
+            }
+            else{
+                continue;
+            }
+
+            if(ball.checkRectIntersect(brick) && brick.getHitCount() < 1){
+                ball.bounceOffBrick(brick);
+//                System.out.println(brick.getX());
+
+            }
+
+//            brickRect.setFill(Color.BLACK);
+
+
+        }
+        if (ball.checkRectIntersect(paddle)) {
             ball.bounceOffPaddle(paddle);
         }
 
@@ -119,20 +147,7 @@ public class Main extends Application {
             ball.setYDir(ball.getYDir() * -1);
         }
 
-        for(int i = 0; i < 5; i++){
-            Brick brick = brickArr[i];
-            if(ball.checkRectIntersect(brick.getRect()) && brick.getHitCount() < 1){
-                ball.bounceOffBrick(brick);
 
-            }
-            Rectangle brickRect = brick.getRect();
-//            brickRect.setFill(Color.BLACK);
-
-            if(brick.getHitCount() < 1){
-                brickGroup.getChildren().remove(brickRect);
-            }
-
-        }
 
         ball.setX(ball.getX() + ball.getXDir() * BOUNCER_SPEED * elapsedTime);
         ball.setY(ball.getY() + ball.getYDir() * BOUNCER_SPEED * elapsedTime);

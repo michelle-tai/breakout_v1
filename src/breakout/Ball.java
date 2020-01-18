@@ -200,7 +200,7 @@ public class Ball implements Sprite{
 //            yDir = yDir * -1;
             xDir = xDir * -1.15;
         }
-        brick.incHitCount(1);
+        brick.incHitCount();
     }
 
     void changeDirection(RectangularSprite rect) {
