@@ -4,6 +4,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
+import static breakout.Main.BACKGROUND;
+
 public class Brick extends Rectangle{
 
 
@@ -20,6 +22,9 @@ public class Brick extends Rectangle{
          this.setWidth(width);
          this.setHeight(height);
         this.setFill(color);
+        this.setStroke(BACKGROUND);
+        this.setStrokeWidth(5);
+
 //        System.out.println(color);
         setPos(x, y);
         setBounds();
@@ -38,7 +43,7 @@ public class Brick extends Rectangle{
         leftBound = this.getX();
         rightBound = this.getX() + this.getWidth();
         topBound = this.getY();
-        botBound = this.getY() - this.getHeight();
+        botBound = this.getY() + this.getHeight();
     }
 
     public double getLeftBound() {
