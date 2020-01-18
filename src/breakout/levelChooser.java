@@ -21,15 +21,17 @@ public class levelChooser {
     int lives = 3;
     Text lifeStats = new Text("Lives: " + lives);
     Text losingText = new Text("You lost :(");
+    int width;
+    int height;
 
-    public levelChooser(int width, int height, int r, int lifeNum){
+    public levelChooser(int w, int h, int r, int lifeNum){
         rows = r;
         lives = lifeNum;
+        width = w;
+        height = h;
         initializeBrickGroup(rows);
         initializeText(lifeStats);
         initializePaddleAndBall(width, height);
-        root.getChildren().add(paddle);
-        root.getChildren().add(ball.getBallCircle());
         root.getChildren().add(brickGroup);
         root.getChildren().add(textGroup);
     }
@@ -37,9 +39,7 @@ public class levelChooser {
     Group getRoot(){
         return root;
     }
-    Group getBrickGroup(){
-        return brickGroup;
-    }
+
     Group getTextGroup(){
         return textGroup;
     }
@@ -55,12 +55,24 @@ public class levelChooser {
     void decrementLives(){
         lives--;
     }
-    void setRows(int n){
-        rows = n;
+    void incrementLives() {
+        lives++;
     }
+    
 
     void resetBrickGroup(){
         initializeBrickGroup(rows);
+    }
+
+    void setLifeStats() {
+        lifeStats.setText("Lives: " + getLives());
+    }
+
+    Group getBrickGroup(){
+        return brickGroup;
+    }
+    void setRows(int n){
+        rows = n;
     }
 
     private void initializeBrickGroup(int rows) {
@@ -77,22 +89,6 @@ public class levelChooser {
             xRect = 0;
             yRect += 100;
         }
-    }
-
-    private void initializeText(Text text) {
-        Rectangle re = new Rectangle(0, SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT, SIZE_WIDTH, 10);
-        re.setFill(Color.BLACK);
-        root.getChildren().add(re);
-        text.setX(10);
-        text.setY(SIZE_HEIGHT - 2 * PADDLE_HEIGHT);
-        textGroup.getChildren().add(text);
-    }
-
-    private void initializePaddleAndBall(int width, int height) {
-        double bouncerStartX = width / 2;
-        paddle = new Paddle(bouncerStartX - PADDLE_WIDTH / 2, height - STATUS_BAR_SIZE, PADDLE_WIDTH, PADDLE_HEIGHT);
-        double bouncerStartY = paddle.getY() - 20;
-        ball = new Ball(bouncerStartX, bouncerStartY, BOUNCER_RADIUS);
     }
 
     void updateBrickArr() {
@@ -113,6 +109,27 @@ public class levelChooser {
             }
         }
     }
+
+    private void initializeText(Text text) {
+        Rectangle re = new Rectangle(0, SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT, SIZE_WIDTH, 10);
+        re.setFill(Color.BLACK);
+        root.getChildren().add(re);
+        text.setX(10);
+        text.setY(SIZE_HEIGHT - 2 * PADDLE_HEIGHT);
+        textGroup.getChildren().clear();
+        textGroup.getChildren().add(text);
+    }
+
+    private void initializePaddleAndBall(int width, int height) {
+        double bouncerStartX = width / 2;
+        paddle = new Paddle(bouncerStartX - PADDLE_WIDTH / 2, height - STATUS_BAR_SIZE, PADDLE_WIDTH, PADDLE_HEIGHT);
+        double bouncerStartY = paddle.getY() - 20;
+        ball = new Ball(bouncerStartX, bouncerStartY, BOUNCER_RADIUS);
+        root.getChildren().add(paddle);
+        root.getChildren().add(ball.getBallCircle());
+    }
+
+
 
      void moveBall(double elapsedTime) {
         if(brickGroup.getChildren().size() == 0){
@@ -166,11 +183,36 @@ public class levelChooser {
 
     }
 
-    public void incrementLives() {
-        lives++;
+
+    public void setLevel(int i) {
+        root.getChildren().clear();
+        brickGroup.getChildren().clear();
+        textGroup.getChildren().clear();
+        initializeBrickGroup(rows);
+        initializeText(lifeStats);
+        initializePaddleAndBall(width, height);
+//        root.getChildren().add(paddle);
+//        root.getChildren().add(ball.getBallCircle());
+        root.getChildren().add(brickGroup);
+        root.getChildren().add(textGroup);
+
     }
 
-    public void setLifeStats() {
-        lifeStats.setText("Lives: " + getLives());
+//    private Map<Integer, List<String>> loadFromFile (String filename) {
+//        Map<Integer, List<String>> result = new HashMap<>();
+//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename)))) {
+//            String line = reader.readLine();
+//            while (line != null) {
+//                String word = line.trim();
+//                List<String> words = result.getOrDefault(word.length(), new ArrayList<>());
+//                words.add(word);
+//                result.put(word.length(), words);
+//                line = reader.readLine();
+//            }
+//        }
+//        catch (IOException e) {
+//            System.err.println("A error occurred reading word file: " + e);
+//        }
+//        return result;
     }
 }

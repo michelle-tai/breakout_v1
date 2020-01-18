@@ -114,30 +114,11 @@ public class Main extends Application {
 
         if (code == KeyCode.DIGIT1) {
 //            lvl.setLevel(1);
+            lvl = new levelChooser(SIZE_WIDTH, SIZE_HEIGHT, 1, 3);
+            root = lvl.getRoot();
+            myScene.setRoot(root);
         }
         //cheat codes!
-    }
-    private void moveBall(double elapsedTime) {
-        if(brickGroup.getChildren().size() == 0){
-            stopBall();
-        }
-        if (ball.checkRectIntersect(paddle)) {
-            ball.bounceOffPaddle(paddle);
-        }
-
-        else if((ball.getY() + ball.getRadius()) >= SIZE_HEIGHT){
-            ball.setX(ball.getX());
-            ball.setY(ball.getY());
-        }
-        else if((ball.getX() + ball.getRadius()) >= SIZE_WIDTH || (ball.getX() - ball.getRadius()) <= 0){
-            ball.setXDir(ball.getXDir() * -1);
-        }
-        else if((ball.getBallCircle().getCenterY() - ball.getRadius()) <= 0){
-            ball.setYDir(ball.getYDir() * -1);
-        }
-
-        ball.setX(ball.getX() + ball.getXDir() * BOUNCER_SPEED * elapsedTime);
-        ball.setY(ball.getY() + ball.getYDir() * BOUNCER_SPEED * elapsedTime);
     }
 
     private void stopBall() {
