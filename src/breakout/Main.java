@@ -156,7 +156,16 @@ public class Main extends Application {
     }
 
     public void setNewLevel() {
+        int prevLevelScore;
+        if(currLevelNum > 1){
+            prevLevelScore = lvl.getScore();
+        }
+        else{
+            prevLevelScore = 0;
+        }
+
         lvl = new levelChooser(SIZE_WIDTH, SIZE_HEIGHT, currLevelNum, 3);
+        lvl.setScore(prevLevelScore);
         root = lvl.getRoot();
         ball = lvl.getBall();
         paddle = lvl.getPaddle();

@@ -103,6 +103,10 @@ public class levelChooser {
         scoreStats.setText("Score: "+ score);
     }
 
+    void setScore(int n){
+        score = n;
+    }
+
     Group getBrickGroup(){
         return brickGroup;
     }
