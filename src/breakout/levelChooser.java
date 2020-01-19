@@ -14,6 +14,8 @@ public class levelChooser {
     Group root = new Group();
     Group brickGroup = new Group();
     Group textGroup = new Group();
+    Group ballGroup = new Group();
+    Group paddleGroup = new Group();
     int rows;
     Brick brickArr[][];
     Paddle paddle;
@@ -23,17 +25,37 @@ public class levelChooser {
     Text losingText = new Text("You lost :(");
     int width;
     int height;
+    final int SPACE_BETWEEN = 5;
+    int currLevel;
+
+    int score = 0;
+    Text scoreStats = new Text("Score: " + score);
 
     public levelChooser(int w, int h, int r, int lifeNum){
+        root.getChildren().clear();
         rows = r;
+        currLevel = r;
         lives = lifeNum;
         width = w;
         height = h;
-        initializeBrickGroup(rows);
-        initializeText(lifeStats);
-        initializePaddleAndBall(width, height);
-        root.getChildren().add(brickGroup);
-        root.getChildren().add(textGroup);
+        if(rows == 0){
+            Text startText = new Text("Hi! Welcome to my game.\n Use the left and right arrow keys to move\n" +
+                    "Press 1 to start");
+            startText.setX(200);
+            startText.setY(SIZE_HEIGHT/2);
+            textGroup.getChildren().add(startText);
+        }
+        else{
+            initializeBrickGroup(rows);
+            initializeText(lifeStats, scoreStats);
+            initializePaddleAndBall(width, height);
+            root.getChildren().add(brickGroup);
+            root.getChildren().add(textGroup);
+            root.getChildren().add(ballGroup);
+            root.getChildren().add(paddleGroup);
+        }
+
+
     }
 
     Group getRoot(){
@@ -42,6 +64,12 @@ public class levelChooser {
 
     Group getTextGroup(){
         return textGroup;
+    }
+    Group getBallGroup(){
+        return ballGroup;
+    }
+    Group getPaddleGroup(){
+        return paddleGroup;
     }
     Ball getBall(){
         return ball;
@@ -58,7 +86,10 @@ public class levelChooser {
     void incrementLives() {
         lives++;
     }
-    
+
+    int getScore(){
+        return score;
+    }
 
     void resetBrickGroup(){
         initializeBrickGroup(rows);
@@ -66,6 +97,10 @@ public class levelChooser {
 
     void setLifeStats() {
         lifeStats.setText("Lives: " + getLives());
+    }
+
+    void setScoreStats(){
+        scoreStats.setText("Score: "+ score);
     }
 
     Group getBrickGroup(){
@@ -76,18 +111,18 @@ public class levelChooser {
     }
 
     private void initializeBrickGroup(int rows) {
-        int xRect = 0;
+        int xRect = SPACE_BETWEEN;
         int yRect = 0;
         Paint fill = Color.BLACK;
         brickArr = new Brick[rows][5];
         for(int row = 0; row < rows; row++){
             for(int col = 0; col < 5; col++){
-                brickArr[row][col] = new Brick(xRect, yRect, SIZE_WIDTH / 5, 100, fill);
+                brickArr[row][col] = new Brick(xRect, yRect, SIZE_WIDTH / 5 - SPACE_BETWEEN, 100, row + 1);
                 xRect += (SIZE_WIDTH / 5);
                 brickGroup.getChildren().add(brickArr[row][col]);
             }
-            xRect = 0;
-            yRect += 100;
+            xRect = SPACE_BETWEEN;
+            yRect += 100 + SPACE_BETWEEN;
         }
     }
 
@@ -97,27 +132,33 @@ public class levelChooser {
             for(int col = 0; col < brickArr[0].length; col++){
                 Brick brick = brickArr[row][col];
 //            only add to group if not at max count! so only shows then
-                if(brick.getHitCount() < 1){
+                if(ball.checkRectIntersect(brick) && brick.getHitCount() < brick.getMaxHitVal()) {
+                    ball.bounceOffBrick(brick);
+                    if(brick.getHitCount() == brick.getMaxHitVal()){
+                        score = score + brick.getMaxHitVal();
+                        scoreStats.setText("Score: " + score);
+                    }
+                }
+
+                if(brick.getHitCount() < brick.getMaxHitVal()){
                     brickGroup.getChildren().add(brick);
                 }
-                else{
-                    continue;
-                }
-                if(ball.checkRectIntersect(brick) && brick.getHitCount() < 1){
-                    ball.bounceOffBrick(brick);
-                }
+
             }
         }
     }
 
-    private void initializeText(Text text) {
+    private void initializeText(Text lifeText, Text scoreText) {
         Rectangle re = new Rectangle(0, SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT, SIZE_WIDTH, 10);
         re.setFill(Color.BLACK);
         root.getChildren().add(re);
-        text.setX(10);
-        text.setY(SIZE_HEIGHT - 2 * PADDLE_HEIGHT);
+        lifeText.setX(10);
+        lifeText.setY(SIZE_HEIGHT - 2 * PADDLE_HEIGHT);
+        scoreText.setX(100);
+        scoreText.setY(SIZE_HEIGHT - 2 * PADDLE_HEIGHT);
         textGroup.getChildren().clear();
-        textGroup.getChildren().add(text);
+        textGroup.getChildren().add(lifeText);
+        textGroup.getChildren().add(scoreText);
     }
 
     private void initializePaddleAndBall(int width, int height) {
@@ -125,8 +166,8 @@ public class levelChooser {
         paddle = new Paddle(bouncerStartX - PADDLE_WIDTH / 2, height - STATUS_BAR_SIZE, PADDLE_WIDTH, PADDLE_HEIGHT);
         double bouncerStartY = paddle.getY() - 20;
         ball = new Ball(bouncerStartX, bouncerStartY, BOUNCER_RADIUS);
-        root.getChildren().add(paddle);
-        root.getChildren().add(ball.getBallCircle());
+        paddleGroup.getChildren().add(paddle);
+        ballGroup.getChildren().add(ball.getBallCircle());
     }
 
 
@@ -134,6 +175,11 @@ public class levelChooser {
      void moveBall(double elapsedTime) {
         if(brickGroup.getChildren().size() == 0){
             stopBall();
+            int nextLevel = currLevel + 1;
+            Text nextlevel = new Text("Press "+ nextLevel + " to go to the next level");
+            nextlevel.setX(100);
+            nextlevel.setY(350);
+            textGroup.getChildren().add(nextlevel);
         }
         if (ball.checkRectIntersect(paddle)) {
             ball.bounceOffPaddle(paddle);
@@ -161,7 +207,7 @@ public class levelChooser {
     }
 
     public void checkBall() {
-        if(ball.checkIfDead(SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT + 20)){
+        if(ball.checkIfDead(SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT + 10)){
             ball.setX(paddle.getX() + PADDLE_WIDTH/2);
             ball.setY(paddle.getY() - 20);
             ball.setYDir((ball.getYDir() * -1));// 5 so that there isn't weird effects with the paddle
@@ -177,8 +223,8 @@ public class levelChooser {
             stopBall();
             losingText.setX(SIZE_WIDTH /2);
             losingText.setY(SIZE_HEIGHT/2);
-            textGroup.getChildren().add(losingText);
-            textGroup.getChildren().removeAll(losingText);
+//            textGroup.getChildren().add(losingText);
+//           textGroup.getChildren().remove(losingText);
         }
 
     }
@@ -189,7 +235,7 @@ public class levelChooser {
         brickGroup.getChildren().clear();
         textGroup.getChildren().clear();
         initializeBrickGroup(rows);
-        initializeText(lifeStats);
+        initializeText(lifeStats, scoreStats);
         initializePaddleAndBall(width, height);
 //        root.getChildren().add(paddle);
 //        root.getChildren().add(ball.getBallCircle());
@@ -214,5 +260,5 @@ public class levelChooser {
 //            System.err.println("A error occurred reading word file: " + e);
 //        }
 //        return result;
-    }
+
 }

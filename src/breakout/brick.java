@@ -12,32 +12,44 @@ public class Brick extends Rectangle{
     private int hitCount = 0;
     //width and height from sprite
 
+    private int maxHit = 0;
 //    Rectangle rect;
     private double leftBound;
     private double rightBound;
     private double topBound;
     private double botBound;
 
-    public Brick(double x, double y, double width, double height, Paint color){
+    public Brick(double x, double y, double width, double height, int maxHitVal){
          this.setWidth(width);
          this.setHeight(height);
-        this.setFill(color);
+//        this.setFill(color);
         this.setStroke(BACKGROUND);
-        this.setStrokeWidth(5);
+//        this.setStrokeWidth(5);
+        maxHit = maxHitVal;
+        if(maxHit == 1){
+            this.setFill(Color.PINK);
+        }
+        else if(maxHit == 2){
+            this.setFill(Color.ALICEBLUE);
+        }
+        else if(maxHit == 3){
+            this.setFill(Color.GREEN);
+        }
 
 //        System.out.println(color);
         setPos(x, y);
         setBounds();
     }
 
+    int getMaxHitVal(){
+        return maxHit;
+    }
 
 
     public void setPos(double x, double y) {
         this.setX(x);
         this.setY(y);
     }
-
-
 
     public void setBounds() {
         leftBound = this.getX();
@@ -75,6 +87,8 @@ public class Brick extends Rectangle{
 
     void incHitCount(){
         hitCount++;
+        System.out.println(leftBound + " " +hitCount);
+
     }
 
 }

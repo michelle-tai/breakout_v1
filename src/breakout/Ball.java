@@ -15,7 +15,7 @@ public class Ball implements Sprite{
     private double ballSpeed;
 
     private double xDir = 1;
-    private double yDir = -1;
+    private double yDir = 1;
 
     public Ball(double x, double y, double radius){
         createBall(x, y, radius);
@@ -92,13 +92,13 @@ public class Ball implements Sprite{
 //        System.out.println(brick.getRightBound() + ballCircle.getRadius());
 //        System.out.println(ballCircle.getCenterX());
 //        System.out.println(ballCircle.getCenterY());
-        if( brick.getBotBound() + ballCircle.getRadius() - 5   <= ballCircle.getCenterY()){
+        if( brick.getBotBound() + ballCircle.getRadius() >= ballCircle.getCenterY() && (ballCircle.getCenterX() > brick.getLeftBound() && ballCircle.getCenterX() < brick.getRightBound())){
             yDir = yDir * -1;
-            System.out.println("y");
+//            System.out.println("y");
         }
-        else if(brick.getTopBound() - ballCircle.getRadius() + 5 >= ballCircle.getCenterY()){
+        else if(brick.getTopBound() - ballCircle.getRadius() <= ballCircle.getCenterY() && (ballCircle.getCenterX() > brick.getLeftBound() && ballCircle.getCenterX() < brick.getRightBound())){
             yDir = yDir * -1;
-            System.out.println("y");
+//            System.out.println("y");
         }
         else{
             xDir = xDir * -1;

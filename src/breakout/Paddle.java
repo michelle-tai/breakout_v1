@@ -8,7 +8,7 @@ import static breakout.Main.SIZE_WIDTH;
 
 public class Paddle extends Rectangle {
 
-    private double paddleSpeed = 20;
+    private double paddleSpeed = 40;
     private double initialX;
     private double initialY;
     private double leftBound;

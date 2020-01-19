@@ -34,18 +34,25 @@ public class Main extends Application {
     // some things needed to remember during game
     private Scene myScene;
     private int xDir = 1;
-    private int yDir = -1;
+    private int yDir = 1;
     Brick brickArr[][];
     private Ball ball;
     private Paddle paddle;
     Group root = new Group();
     Group brickGroup = new Group();
+    Group ballPaddleGroup = new Group();
     Group textGroup = new Group();
     int lives;
     Text lifeStats = new Text("Lives: " + lives);
     int level = 1;
     Text losingText = new Text("You lost :(");
     levelChooser lvl;
+    int currLevelNum = 1;
+
+    int score = 0;
+    Text scoreStats = new Text("Score: " + score);
+
+    boolean ifStart = true;
 
 
     /**
@@ -68,11 +75,9 @@ public class Main extends Application {
     // Create the game's "scene": what shapes will be in the game and their starting properties
     private Scene setupGame (int width, int height, Paint background) {
         int rows = 2;
-        lvl = new levelChooser(width, height, rows, 3);
-        root = lvl.getRoot();
-        ball = lvl.getBall();
-        paddle = lvl.getPaddle();
-        lives = lvl.getLives();
+//        lvl = new levelChooser(width, height, rows, 3);
+//        ballPaddleGroup = lvl.getBallPaddleGroup();
+        startGame();
         // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
         // respond to input
@@ -81,44 +86,82 @@ public class Main extends Application {
         return scene;
     }
 
+    void startGame() {
+        Text startText = new Text("Hi! Welcome to my game.\n Use the left and right arrow keys to move\n" +
+                "Press 1 to start");
+        startText.setX(100);
+        startText.setY(SIZE_HEIGHT/2);
+        root.getChildren().add(startText);
+    }
+
     // Change properties of shapes in small ways to animate them over time
     // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start
     private void step (double elapsedTime) {
         // update "actors" attributes
-        lvl.updateBrickArr();
-        lvl.moveBall(elapsedTime);
-        lvl.checkBall();
-        lvl.checkLives();
+        if(!ifStart){
+            lvl.updateBrickArr();
+            lvl.moveBall(elapsedTime);
+            lvl.checkBall();
+            lvl.checkLives();
+        }
+
     }
 
     // What to do each time a key is pressed
     private void handleKeyInput (KeyCode code) {
-        paddle.handleKeyInput(code);
-        if(code == KeyCode.R){
-            ball.resetBall();
-            paddle.reset();
+        if(ifStart){
+            if(code == KeyCode.DIGIT1){
+                ifStart = false;
+                currLevelNum = 1;
+                setNewLevel();
+            }
+        }
+        else {
+            paddle = lvl.getPaddle();
+            paddle.handleKeyInput(code);
+            if (code == KeyCode.R) {
+                ball.resetBall();
+                paddle.reset();
+            }
+
+            if (code == KeyCode.DIGIT1) {
+                currLevelNum = 1;
+                setNewLevel();
+
+            }
+            if (code == KeyCode.DIGIT2) {
+                currLevelNum = 2;
+                setNewLevel();
+            }
+            if (code == KeyCode.DIGIT3) {
+                currLevelNum = 3;
+                setNewLevel();
+            }
+
+            if (code == KeyCode.L) {
+                lvl.incrementLives();
+                lvl.setLifeStats();
+            }
+
+            if (code == KeyCode.SPACE) {
+                //            root.getChildren().clear();
+                paddle.reset();
+                ball.resetBall();
+                brickGroup.getChildren().clear();
+                lvl.resetBrickGroup();
+            }
         }
 
-        if(code == KeyCode.L){
-            lvl.incrementLives();
-            lvl.setLifeStats();
-        }
-
-        if(code == KeyCode.SPACE){
-//            root.getChildren().clear();
-            paddle.reset();
-            ball.resetBall();
-            brickGroup.getChildren().clear();
-            lvl.resetBrickGroup();
-        }
-
-        if (code == KeyCode.DIGIT1) {
-//            lvl.setLevel(1);
-            lvl = new levelChooser(SIZE_WIDTH, SIZE_HEIGHT, 1, 3);
-            root = lvl.getRoot();
-            myScene.setRoot(root);
-        }
         //cheat codes!
+    }
+
+    public void setNewLevel() {
+        lvl = new levelChooser(SIZE_WIDTH, SIZE_HEIGHT, currLevelNum, 3);
+        root = lvl.getRoot();
+        ball = lvl.getBall();
+        paddle = lvl.getPaddle();
+        lives = lvl.getLives();
+        myScene.setRoot(root);
     }
 
     private void stopBall() {
