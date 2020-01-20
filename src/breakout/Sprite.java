@@ -1,5 +1,8 @@
 package breakout;
 
+/**
+ * Actually uneeded
+ */
 interface Sprite{
     void setX(double x);
     double getX();

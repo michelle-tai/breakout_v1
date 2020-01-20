@@ -14,6 +14,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class is the main driver for my breakout game.
+ * @author Michelle Tai
+ */
 public class Main extends Application {
     public static final String TITLE = "Boba Breakout";
     public static final int SIZE_WIDTH = 400;
@@ -57,6 +61,8 @@ public class Main extends Application {
 
     /**
      * Initialize what will be displayed and how it will be updated.
+     * @author Michelle Tai
+     * @author Robert C. Duvall
      */
     @Override
     public void start (Stage stage) {
@@ -74,19 +80,18 @@ public class Main extends Application {
     }
     // Create the game's "scene": what shapes will be in the game and their starting properties
     private Scene setupGame (int width, int height, Paint background) {
-        int rows = 2;
-//        lvl = new levelChooser(width, height, rows, 3);
-//        ballPaddleGroup = lvl.getBallPaddleGroup();
         startGame();
         // create a place to see the shapes
         Scene scene = new Scene(root, width, height, background);
         // respond to input
         scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
-        scene.setOnMouseClicked(e -> handleMouseInput(e.getX(), e.getY()));
         return scene;
     }
 
-    void startGame() {
+    /**
+     * Crete the splash screen for the game and has the game start on this screen
+     */
+    private void startGame() {
         Text startText = new Text("Hi! Welcome to my game.\n Use the left and right arrow keys to move\n" +
                 "Press 1 to start");
         startText.setX(100);
@@ -94,8 +99,12 @@ public class Main extends Application {
         root.getChildren().add(startText);
     }
 
-    // Change properties of shapes in small ways to animate them over time
-    // Note, there are more sophisticated ways to animate shapes, but these simple ways work fine to start
+    /**
+     * Change properties of shapes in small ways to animate them over time
+     * Updates the game screen over time
+     * @author Michelle Tai
+     * @param elapsedTime is the time that has passed
+     */
     private void step (double elapsedTime) {
         // update "actors" attributes
         if(!ifStart){
@@ -107,7 +116,13 @@ public class Main extends Application {
 
     }
 
-    // What to do each time a key is pressed
+    /**
+     * handles any user inputs, like pressing a number key or the arrow keys.
+     * Moves the paddle right and left when right or left arrow key is pressed
+     * The number keys change the level
+     * @author Michelle Tai
+     * @param code is the user input
+     */
     private void handleKeyInput (KeyCode code) {
         if(ifStart){
             if(code == KeyCode.DIGIT1){
@@ -133,7 +148,7 @@ public class Main extends Application {
                 currLevelNum = 2;
                 setNewLevel();
             }
-            if (code == KeyCode.DIGIT3) {
+            if (code == KeyCode.DIGIT3 || code == KeyCode.DIGIT4 || code == KeyCode.DIGIT5 || code == KeyCode.DIGIT6 || code == KeyCode.DIGIT7 || code == KeyCode.DIGIT8 || code == KeyCode.DIGIT9) {
                 currLevelNum = 3;
                 setNewLevel();
             }
@@ -151,11 +166,13 @@ public class Main extends Application {
                 lvl.resetBrickGroup();
             }
         }
-
-        //cheat codes!
     }
 
-    public void setNewLevel() {
+    /**
+     * Changes the level layout by changing the root of the scene
+     * @author Michelle Tai
+     */
+    private void setNewLevel() {
         int prevLevelScore;
         if(currLevelNum > 1){
             prevLevelScore = lvl.getScore();
@@ -173,23 +190,9 @@ public class Main extends Application {
         myScene.setRoot(root);
     }
 
-    private void stopBall() {
-        ball.setPos(ball.getX(), ball.getY());
-        ball.setYDir(0);
-        ball.setXDir(0);
-    }
-
-
-    // What to do each time a key is pressed
-    private void handleMouseInput (double x, double y) {
-//        if (myGrower.contains(x, y)) {
-//            myGrower.setScaleX(myGrower.getScaleX() * GROWER_RATE);
-//            myGrower.setScaleY(myGrower.getScaleY() * GROWER_RATE);
-//        }
-    }
-
     /**
      * Start the program.
+     * @author Robert C. Duvall
      */
     public static void main (String[] args) {
         launch(args);

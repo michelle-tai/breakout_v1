@@ -9,7 +9,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import static breakout.Main.*;
-
+/**
+ * Changes the level layout by changing the root of the scene.
+ * Each level has its own brick grid, ball, paddle, and score
+ * @author Michelle Tai
+ */
 public class levelChooser {
     Group root = new Group();
     Group brickGroup = new Group();
@@ -31,6 +35,14 @@ public class levelChooser {
     int score = 0;
     Text scoreStats = new Text("Score: " + score);
 
+    /**
+     * Constructor for the levelChooser class to initialize all parts of the level
+     * @author Michelle Tai
+     * @param w is the width of the level screen
+     * @param h is the height of the level screen
+     * @param r is the number of rows in the block grid, which corresponds with the level number
+     * @para lifeNum is the number of lives you start with on each level
+     */
     public levelChooser(int w, int h, int r, int lifeNum){
         root.getChildren().clear();
         rows = r;
@@ -57,67 +69,96 @@ public class levelChooser {
 
 
     }
-
-    Group getRoot(){
+    /**
+     * Getter for the root node
+     * @return the root node
+     * @author Michelle Tai
+     */
+    public Group getRoot(){
         return root;
     }
 
-    Group getTextGroup(){
-        return textGroup;
-    }
-    Group getBallGroup(){
-        return ballGroup;
-    }
-    Group getPaddleGroup(){
-        return paddleGroup;
-    }
-    Ball getBall(){
+    /**
+     * Getter for the level's ball
+     * @author Michelle Tai
+     * @return the ball so that it can be manipulated
+     */
+    public Ball getBall(){
         return ball;
     }
-    Paddle getPaddle(){
+    /**
+     * Getter for the level's paddle
+     * @author Michelle Tai
+     * @return the paddle of the level so that it can be moved by other methods
+     */
+    public Paddle getPaddle(){
         return paddle;
     }
-    int getLives(){
+    /**
+     * Getter for the number of lives left
+     * @author Michelle Tai
+     * @return the number of lives left
+     */
+    public int getLives(){
         return lives;
     }
-    void decrementLives(){
+
+    /**
+     * Decreases the number of lives left by 1
+     * @author Michelle Tai
+     */
+    public void decrementLives(){
         lives--;
     }
-    void incrementLives() {
+    /**
+     * Increases the number of lives left by 1
+     * @author Michelle Tai
+     */
+    public void incrementLives() {
         lives++;
     }
-
-    int getScore(){
+    /**
+     * Gets the current score
+     * I tried to use this to make the scores carry over between levels, but it doesn't work
+     * @author Michelle Tai
+     * @return the current score of the level
+     */
+    public int getScore(){
         return score;
     }
-
-    void resetBrickGroup(){
+    /**
+     * Resets the brick group
+     * @author Michelle Tai
+     */
+    public void resetBrickGroup(){
         initializeBrickGroup(rows);
     }
 
-    void setLifeStats() {
+    /**
+     * Updates the current life stats once a ball "dies"
+     * @author Michelle Tai
+     */
+    public void setLifeStats() {
         lifeStats.setText("Lives: " + getLives());
     }
 
-    void setScoreStats(){
-        scoreStats.setText("Score: "+ score);
-    }
-
-    void setScore(int n){
+    /**
+     * Updates the score status to reflect the current score, especially after
+     * a block is gotten rid of
+     * @author Michelle Tai
+     */
+    public void setScore(int n){
         score = n;
     }
 
-    Group getBrickGroup(){
-        return brickGroup;
-    }
-    void setRows(int n){
-        rows = n;
-    }
-
-    private void initializeBrickGroup(int rows) {
+    /**
+     * Initializes the brick grid and adds it to the level's brick group
+     * @author Michelle Tai
+     * @param rows indicates the number of rows present in the grid
+     */
+    public void initializeBrickGroup(int rows) {
         int xRect = SPACE_BETWEEN;
         int yRect = 0;
-        Paint fill = Color.BLACK;
         brickArr = new Brick[rows][5];
         for(int row = 0; row < rows; row++){
             for(int col = 0; col < 5; col++){
@@ -130,7 +171,13 @@ public class levelChooser {
         }
     }
 
-    void updateBrickArr() {
+    /**
+     * Removes all the nodes of the brickgroup and only adds in the bricks that don't have a hitcount
+     * larger than the maximum hit count (aka the hit count needed to clear the brick)
+     *
+     * @author Michelle Tai
+     */
+    public void updateBrickArr() {
         brickGroup.getChildren().clear();
         for(int row = 0; row < brickArr.length; row++){
             for(int col = 0; col < brickArr[0].length; col++){
@@ -152,7 +199,13 @@ public class levelChooser {
         }
     }
 
-    private void initializeText(Text lifeText, Text scoreText) {
+    /**
+     * Initializes the status bar of the lives and scores
+     * @param lifeText is the text for the lives left
+     * @param scoreText is the text for the score
+     * @author Michelle Tai
+     */
+    public void initializeText(Text lifeText, Text scoreText) {
         Rectangle re = new Rectangle(0, SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT, SIZE_WIDTH, 10);
         re.setFill(Color.BLACK);
         root.getChildren().add(re);
@@ -165,7 +218,12 @@ public class levelChooser {
         textGroup.getChildren().add(scoreText);
     }
 
-    private void initializePaddleAndBall(int width, int height) {
+    /**
+     * Initializes the ball and the paddle int he level so that it stars in the center each time
+     * Adds the ball and paddle to its own group, and adds those groups to the root node
+     * @author Michelle Tai
+     */
+    public void initializePaddleAndBall(int width, int height) {
         double bouncerStartX = width / 2;
         paddle = new Paddle(bouncerStartX - PADDLE_WIDTH / 2, height - STATUS_BAR_SIZE, PADDLE_WIDTH, PADDLE_HEIGHT);
         double bouncerStartY = paddle.getY() - 20;
@@ -175,8 +233,12 @@ public class levelChooser {
     }
 
 
-
-     void moveBall(double elapsedTime) {
+    /**
+     * Makes the ball bounce off the paddle, walls, and bricks by changing their x direction and y direction
+     * @param elapsedTime is the time that has elapsed since the start of the game
+     * @author Michelle Tai
+     */
+     public void moveBall(double elapsedTime) {
         if(brickGroup.getChildren().size() == 0){
             stopBall();
             int nextLevel = currLevel + 1;
@@ -204,12 +266,20 @@ public class levelChooser {
         ball.setY(ball.getY() + ball.getYDir() * BOUNCER_SPEED * elapsedTime);
     }
 
-    void stopBall() {
+    /**
+     * Stops the ball when there are no more bricks left in the level
+     * @author Michelle Tai
+     */
+    public void stopBall() {
         ball.setPos(ball.getX(), ball.getY());
         ball.setYDir(0);
         ball.setXDir(0);
     }
 
+    /**
+     * Checks whether the ball "dies" if it passes a certain point and decrements the lives
+     * @author Michelle Tai
+     */
     public void checkBall() {
         if(ball.checkIfDead(SIZE_HEIGHT - STATUS_BAR_SIZE + PADDLE_HEIGHT + 10)){
             ball.setX(paddle.getX() + PADDLE_WIDTH/2);
@@ -221,19 +291,24 @@ public class levelChooser {
         }
 
     }
-
+    /**
+     * checks the lives left and stops the ball when there are no lives left.
+     * @author Michelle Tai
+     */
     public void checkLives() {
         if(getLives() == 0){
             stopBall();
             losingText.setX(SIZE_WIDTH /2);
             losingText.setY(SIZE_HEIGHT/2);
-//            textGroup.getChildren().add(losingText);
-//           textGroup.getChildren().remove(losingText);
         }
 
     }
 
-
+    /**
+     * Changes the level layout
+     * @param i is the number of rows to be added to the brick grid and is the level number as well
+     * @author Michelle Tai
+     */
     public void setLevel(int i) {
         root.getChildren().clear();
         brickGroup.getChildren().clear();
@@ -241,28 +316,10 @@ public class levelChooser {
         initializeBrickGroup(rows);
         initializeText(lifeStats, scoreStats);
         initializePaddleAndBall(width, height);
-//        root.getChildren().add(paddle);
-//        root.getChildren().add(ball.getBallCircle());
         root.getChildren().add(brickGroup);
         root.getChildren().add(textGroup);
 
     }
 
-//    private Map<Integer, List<String>> loadFromFile (String filename) {
-//        Map<Integer, List<String>> result = new HashMap<>();
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename)))) {
-//            String line = reader.readLine();
-//            while (line != null) {
-//                String word = line.trim();
-//                List<String> words = result.getOrDefault(word.length(), new ArrayList<>());
-//                words.add(word);
-//                result.put(word.length(), words);
-//                line = reader.readLine();
-//            }
-//        }
-//        catch (IOException e) {
-//            System.err.println("A error occurred reading word file: " + e);
-//        }
-//        return result;
 
 }

@@ -2,6 +2,10 @@ package breakout;
 
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Also unneeded
+ */
+
 public class RectangularSprite implements Sprite{
     Rectangle rect;
     private double leftBound;
@@ -35,36 +39,6 @@ public class RectangularSprite implements Sprite{
         rect.setY(y);
     }
 
-    public double getWidth() {
-        return rect.getWidth();
-    }
-
-    public double getHeight() {
-        return rect.getHeight();
-    }
-
-    public void setBounds() {
-        leftBound = rect.getX();
-        rightBound = rect.getX() + rect.getWidth();
-        topBound = rect.getY();
-        botBound = rect.getY() - rect.getHeight();
-    }
-
-    public double getLeftBound() {
-        return leftBound;
-    }
-
-    public double getRightBound() {
-        return rightBound;
-    }
-
-    public double getTopBound() {
-        return topBound;
-    }
-
-    public double getBotBound() {
-        return botBound;
-    }
 
     Rectangle getRect(){
         return rect;
