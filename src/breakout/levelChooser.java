@@ -1,10 +1,7 @@
 package breakout;
 
 import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -240,7 +237,7 @@ public class levelChooser {
      */
      public void moveBall(double elapsedTime) {
         if(brickGroup.getChildren().size() == 0){
-            stopBall();
+            ball.stopBall();
             int nextLevel = currLevel + 1;
             Text nextlevel = new Text("Press "+ nextLevel + " to go to the next level");
             nextlevel.setX(100);
@@ -251,7 +248,7 @@ public class levelChooser {
             ball.bounceOffPaddle(paddle);
         }
 
-        else if((ball.getY() + ball.getRadius()) >= SIZE_HEIGHT){
+        else if(ball.getY() + ball.getRadius() >= SIZE_HEIGHT){
             ball.setX(ball.getX());
             ball.setY(ball.getY());
         }
@@ -266,15 +263,6 @@ public class levelChooser {
         ball.setY(ball.getY() + ball.getYDir() * BOUNCER_SPEED * elapsedTime);
     }
 
-    /**
-     * Stops the ball when there are no more bricks left in the level
-     * @author Michelle Tai
-     */
-    public void stopBall() {
-        ball.setPos(ball.getX(), ball.getY());
-        ball.setYDir(0);
-        ball.setXDir(0);
-    }
 
     /**
      * Checks whether the ball "dies" if it passes a certain point and decrements the lives
@@ -297,7 +285,7 @@ public class levelChooser {
      */
     public void checkLives() {
         if(getLives() == 0){
-            stopBall();
+            ball.stopBall();
             losingText.setX(SIZE_WIDTH /2);
             losingText.setY(SIZE_HEIGHT/2);
         }

@@ -7,9 +7,18 @@ import javafx.scene.shape.Shape;
 
 /**
  * This class is holds all the information for the ball
+ *
+ * This class is mean to encapsulate most of the ball's behaviors (at least as much as I could fit and make the code still functional). This
+ * class contains the ball's behaviors for when it collides with a paddle, a brick, calculates whether or not it's intersecting with a rectangle shape, checks whether
+ * the ball passed the paddle/"died," and controls the ball's direction of travel. This class also has multiple getter and setter methods–while I recognize that this
+ * is not the best design, I think this is justified because I don't want any outside objects/methods to have the ability. On the other hand, I learned that passing in
+ * objects as arguments is not good design because the objects could easily be modified in the method, which not safe. However, I'm not too sure about how to solve this.
+ * My class also demonstrates DRY code and "Tell the Other Guy" code. DRY code can be seen when I use the Rectangle object as a parameter to my checkIfRectIntersect
+ * method since I chose to have the both paddle and brick classes to extend rectangle, so both can be passed as arguments. The "Tell the Other Guy" principle can be seen
+ * when I have the ball control it's bouncing and travel behavior within this class–most of the ball's behavior is encapsulated within this class.
  * @author Michelle Tai
  */
-public class Ball implements Sprite{
+public class Ball{
     private Circle ballCircle;
     private double initialX;
     private double initialY;
@@ -36,7 +45,6 @@ public class Ball implements Sprite{
      * @param x is the new center coordinate
      * @author Michelle Tai
      */
-    @Override
     public void setX(double x) {
         ballCircle.setCenterX(x);
     }
@@ -46,7 +54,6 @@ public class Ball implements Sprite{
      * @return the current x center coordinate
      * @author Michelle Tai
      */
-    @Override
     public double getX() {
         return ballCircle.getCenterX();
     }
@@ -56,7 +63,6 @@ public class Ball implements Sprite{
      * @param y is the new center coordinate
      * @author Michelle Tai
      */
-    @Override
     public void setY(double y) {
         ballCircle.setCenterY(y);
     }
@@ -66,7 +72,6 @@ public class Ball implements Sprite{
      * @return the current y center coordinate
      * @author Michelle Tai
      */
-    @Override
     public double getY() {
         return ballCircle.getCenterY();
     }
@@ -77,7 +82,6 @@ public class Ball implements Sprite{
      * @param y the new y center coordinate
      * @author Michelle Tai
      */
-    @Override
     public void setPos(double x, double y) {
         ballCircle.setCenterX(x);
         ballCircle.setCenterY(y);
@@ -200,6 +204,13 @@ public class Ball implements Sprite{
         return false;
     }
 
-
-
+    /**
+     * Stops the ball
+     * @author Michelle Tai
+     */
+    public void stopBall() {
+        this.setPos(this.getX(), this.getY());
+        this.setYDir(0);
+        this.setXDir(0);
+    }
 }
